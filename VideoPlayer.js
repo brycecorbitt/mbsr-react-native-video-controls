@@ -97,6 +97,10 @@ export default class VideoPlayer extends Component {
       onLoad: this._onLoad.bind(this),
       onPause: this.props.onPause,
       onPlay: this.props.onPlay,
+      onSeekRelease: this.props.onSeekRelease,
+      onSeekStart: this.props.onSeekStart,
+      onVolumeRelease: this.props.onVolumeRelease,
+      onVolumeStart: this.props.onVolumeStart,
     };
 
     /**
@@ -779,6 +783,8 @@ export default class VideoPlayer extends Component {
         if (this.player.scrubbingTimeStep > 0) {
           state.paused = true;
         }
+        if(typeof this.props.onSeekStart === 'function')
+          this.props.onSeekStart(this.calculateTimeFromSeekerPosition())
         this.setState(state);
       },
 
@@ -831,6 +837,8 @@ export default class VideoPlayer extends Component {
           state.paused = state.originallyPaused;
           state.seeking = false;
         }
+        if(typeof this.props.onSeekRelease === 'function')
+          this.props.onSeekRelease(time);
         this.setState(state);
       },
     });
@@ -845,6 +853,8 @@ export default class VideoPlayer extends Component {
       onMoveShouldSetPanResponder: (evt, gestureState) => true,
       onPanResponderGrant: (evt, gestureState) => {
         this.clearControlTimeout();
+        if(typeof this.props.onVolumeStart === 'function')
+          this.props.onVolumeStart(this.state.volume);
       },
 
       /**
@@ -857,7 +867,8 @@ export default class VideoPlayer extends Component {
         const position = this.state.volumeOffset + gestureState.dx;
 
         this.setVolumePosition(position);
-        state.volume = this.calculateVolumeFromVolumePosition();
+        const volume = this.calculateVolumeFromVolumePosition();
+        state.volume = volume;
 
         if (state.volume <= 0) {
           state.muted = true;
@@ -876,6 +887,9 @@ export default class VideoPlayer extends Component {
         state.volumeOffset = state.volumePosition;
         this.setControlTimeout();
         this.setState(state);
+        if(typeof this.props.onVolumeRelease === 'function') {
+          this.props.onVolumeRelease(state.volume)
+        }
       },
     });
   }
