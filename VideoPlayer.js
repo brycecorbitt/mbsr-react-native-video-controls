@@ -1003,10 +1003,20 @@ export default class VideoPlayer extends Component {
         <View
           style={[styles.volume.handle, {left: this.state.volumePosition}]}
           {...this.player.volumePanResponder.panHandlers}>
-          <Image
-            style={styles.volume.icon}
-            source={require('./assets/img/volume.png')}
-          />
+          <View 
+            style={{
+              backgroundColor: "rgba(255,255,255,0)",
+              justifyContent: 'center',
+              paddingVertical: 10,
+              paddingLeft: 2,
+              paddingRight: 10
+            }}
+          > 
+            <Image
+              style={styles.volume.icon}
+              source={require('./assets/img/volume.png')}
+            />
+          </View>
         </View>
       </View>
     );
